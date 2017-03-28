@@ -90,6 +90,7 @@ SuffixNode* creatSuffixTree(string s, bool zip = true)
 	return st;
 }
 
+
 void contrast(SuffixNode* sn, string t, bool& flag)
 {
 	// contrast if same with t
@@ -115,6 +116,7 @@ bool isContain(string s, string t)
 	contrast(st, t, flag);
 	return flag;
 }
+
 
 void getLeafNum(SuffixNode* sn, int& num)
 {
@@ -148,12 +150,65 @@ void count(SuffixNode* sn, string t, int& num)
 
 int findRepeatNum(string s, string t)
 {
+	// A suffix tree without compression
 	SuffixNode* st = creatSuffixTree(s, false);
 	int num = 0;
 	count(st, t, num);
 	return num;
 }
 
+
+void digForDeepestNotLeaf(SuffixNode* sn, int currentDepth, SuffixNode*& dn, int& maxDepth)
+{
+	// cout << sn->nodeStr << " " << currentDepth << " " << sn->branchNum << endl;
+	if(currentDepth > maxDepth & sn->branchNum >=2)
+	{
+		maxDepth = currentDepth;
+		dn = sn;
+	}
+	if(sn->branchNum == 0)
+	{
+		return;
+	}
+	for(mapIter i=sn->next.begin(); i!=sn->next.end(); i++)
+	{
+		digForDeepestNotLeaf(i->second, currentDepth+1, dn, maxDepth);
+	}
+}
+
+void digForLongestNotLeaf(SuffixNode* sn, SuffixNode*& ln, int& longest)
+{
+	if(sn->nodeStr.size() > longest && sn->branchNum >=2)
+	{
+		longest = sn->nodeStr.size();
+		ln = sn;
+	}
+	if(sn->branchNum == 0)
+	{
+		return;
+	}
+	for(mapIter i=sn->next.begin(); i!=sn->next.end(); i++)
+	{
+		digForLongestNotLeaf(i->second, ln, longest);
+	}
+}
+
+string longestRepearSub(string s)
+{
+	// Cost more by using suffix tree without compression
+	// SuffixNode* st = creatSuffixTree(s, false);
+	// SuffixNode* deepestNotLeaf;
+	// int maxDepth = 0;
+	// digForDeepestNotLeaf(st, 0, deepestNotLeaf, maxDepth);
+	// return deepestNotLeaf->nodeStr;
+
+	// Using the compressed tree is more sufficient
+	SuffixNode* st = creatSuffixTree(s);
+	SuffixNode* longestNodeNotLeaf;
+	int longest = 0;
+	digForLongestNotLeaf(st, longestNodeNotLeaf, longest);
+	return longestNodeNotLeaf->nodeStr;
+}
 
 int main(int argc, char const *argv[])
 {
@@ -170,6 +225,7 @@ int main(int argc, char const *argv[])
 	// cout << st->branchNum << endl;
 	// cout << "test" << " " << st->next['b']->nodeStr << endl;
 	// cout << isContain("anselishandsome", "sk") << endl;
-	cout << findRepeatNum("fdacdvfscdasdcdcdcascd", "cd") << endl;
+	cout << findRepeatNum("cdfscacaxzcdasdfgsdfscascadaczdasdfgadasdfg", "fg") << endl;
+	// cout << longestRepearSub("cdfscacaxzcdasdfgsdfscascadaczdasdfgadasdfg") << endl;
 	return 0;
 }
