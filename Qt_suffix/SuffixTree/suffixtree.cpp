@@ -81,7 +81,13 @@ SuffixNode* creatSuffixTree(string s, bool zip)
     return st;
 }
 
-// Part of containing judge
+
+/* Part of containing judge
+ *
+ * @Principle:
+ * If S contains T, the string T must be a prefix of one of the suffix of string S,
+ * so we contrast the string T with every suffix of the string S.
+ * */
 void contrast(SuffixNode* sn, string t, bool& flag, int& start)
 {
     // contrast if same with t
@@ -110,18 +116,24 @@ int isContain(string s, string t)
     return start;
 }
 
-// Part of count repeat
-void getLeafNum(SuffixNode* sn, int& num, vector<int>& start)
+
+
+/* Part of count repeat
+ *
+ * @ Principle:
+ * If T repeats twice in S, there will be two suffix of S have the prefix as T,
+ * so we find the node has the string T, and compute the number of leaf from this node.
+ * */
+void getLeafNum(SuffixNode* sn, vector<int>& start)
 {
     if(sn->branchNum == 0)
     {
-        num += 1;
         start.push_back(sn->subSrc);
         return;
     }
     for(mapIter i=sn->next.begin(); i!=sn->next.end(); i++)
     {
-        getLeafNum(i->second, num, start);
+        getLeafNum(i->second, start);
     }
 }
 
@@ -129,7 +141,7 @@ void count(SuffixNode* sn, string t, int& num, vector<int>& start)
 {
     if(sn->nodeStr.substr(0, t.size()) == t)
     {
-        getLeafNum(sn ,num, start);
+        getLeafNum(sn, start);
         return;
     }
     if(sn->branchNum == 0)
@@ -153,6 +165,11 @@ vector<int> findRepeatNum(string s, string t)
 }
 
 
+/* Part for longest repeat sub string
+ * @ Principle:
+ * Cause we need the repeated string, we need to find the non-leaf node,
+ * for the longest, we need to find the deepest.
+ **/
 void digForDeepestNotLeaf(SuffixNode* sn, int currentDepth, SuffixNode*& dn, int& maxDepth)
 {
     // cout << sn->nodeStr << " " << currentDepth << " " << sn->branchNum << endl;
@@ -171,11 +188,14 @@ void digForDeepestNotLeaf(SuffixNode* sn, int currentDepth, SuffixNode*& dn, int
     }
 }
 
-void digForLongestNotLeaf(SuffixNode* sn, SuffixNode*& ln, int& longest)
+void digForLongestNotLeaf(SuffixNode* sn, SuffixNode*& ln, int& longest, vector<int>& start)
 {
     if(sn->nodeStr.size() > longest && sn->branchNum >=2)
     {
         longest = sn->nodeStr.size();
+        // To get the subSrc in leaf node
+        start.clear();
+        getLeafNum(sn, start);
         ln = sn;
     }
     if(sn->branchNum == 0)
@@ -184,11 +204,11 @@ void digForLongestNotLeaf(SuffixNode* sn, SuffixNode*& ln, int& longest)
     }
     for(mapIter i=sn->next.begin(); i!=sn->next.end(); i++)
     {
-        digForLongestNotLeaf(i->second, ln, longest);
+        digForLongestNotLeaf(i->second, ln, longest, start);
     }
 }
 
-string longestRepearSub(string s)
+void longestRepeatSub(string s, int& longest, vector<int>& start)
 {
     // Cost more by using suffix tree without compression
     // SuffixNode* st = creatSuffixTree(s, false);
@@ -200,7 +220,5 @@ string longestRepearSub(string s)
     // Using the compressed tree is more sufficient
     SuffixNode* st = creatSuffixTree(s);
     SuffixNode* longestNodeNotLeaf;
-    int longest = 0;
-    digForLongestNotLeaf(st, longestNodeNotLeaf, longest);
-    return longestNodeNotLeaf->nodeStr;
+    digForLongestNotLeaf(st, longestNodeNotLeaf, longest, start);
 }

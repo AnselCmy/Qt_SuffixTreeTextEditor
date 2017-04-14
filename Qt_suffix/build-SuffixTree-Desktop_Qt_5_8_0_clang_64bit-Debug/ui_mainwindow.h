@@ -37,6 +37,7 @@ public:
     QLabel *Direction;
     QLabel *Result;
     QPushButton *RepeatingCountButton;
+    QPushButton *LongestRepeatButton;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -72,6 +73,9 @@ public:
         RepeatingCountButton = new QPushButton(centralWidget);
         RepeatingCountButton->setObjectName(QStringLiteral("RepeatingCountButton"));
         RepeatingCountButton->setGeometry(QRect(30, 260, 160, 32));
+        LongestRepeatButton = new QPushButton(centralWidget);
+        LongestRepeatButton->setObjectName(QStringLiteral("LongestRepeatButton"));
+        LongestRepeatButton->setGeometry(QRect(30, 300, 160, 32));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -98,6 +102,7 @@ public:
         Direction->setText(QString());
         Result->setText(QString());
         RepeatingCountButton->setText(QApplication::translate("MainWindow", "Repeating Count", Q_NULLPTR));
+        LongestRepeatButton->setText(QApplication::translate("MainWindow", "Longest Repeated Str", Q_NULLPTR));
     } // retranslateUi
 
 };

@@ -21,11 +21,11 @@ void compress(SuffixNode* sn);
 SuffixNode* creatSuffixTree(string s, bool zip = true);
 void contrast(SuffixNode* sn, string t, bool& flag);
 int isContain(string s, string t);
-void getLeafNum(SuffixNode* sn, int& num, vector<int>& start);
+void getLeafNum(SuffixNode* sn, vector<int>& start);
 void count(SuffixNode* sn, string t, int& num, vector<int>& start);
 vector<int> findRepeatNum(string s, string t);
 void digForDeepestNotLeaf(SuffixNode* sn, int currentDepth, SuffixNode*& dn, int& maxDepth);
-void digForLongestNotLeaf(SuffixNode* sn, SuffixNode*& ln, int& longest);
-string longestRepearSub(string s);
+void digForLongestNotLeaf(SuffixNode* sn, SuffixNode*& ln, int& longest, vector<int>& start);
+void longestRepeatSub(string s, int& longest, vector<int>& start);
 
 #endif // SUFFIXTREE_H

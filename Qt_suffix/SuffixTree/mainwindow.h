@@ -25,6 +25,8 @@ private slots:
     void on_ContainJudgeButton_clicked();
     void on_RepeatingCountButton_clicked();
 
+    void on_LongestRepeatButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

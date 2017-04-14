@@ -87,3 +87,48 @@ void MainWindow::on_RepeatingCountButton_clicked()
     ui->Result->setAlignment(Qt::AlignTop);
     ui->Result->setText(s2q(result));
 }
+
+
+void MainWindow::on_LongestRepeatButton_clicked()
+{
+    string s = q2s(ui->stringS->toPlainText());
+    string t = q2s(ui->stringT->toPlainText());
+    // For string s
+    string rsts = s;
+    vector<int> start;
+    int longest = 0;
+    longestRepeatSub(s, longest, start);
+    int repeatNum = start.size();
+    if(repeatNum != 0)
+    {
+        for(vecIter i=start.begin(); i!=start.end(); i++)
+        {
+            HighLight(&rsts, *i, longest);
+        }
+    }
+    ui->stringS->document()->setHtml(s2q(rsts));
+    // For string t
+    string rstt = t;
+    start.clear();
+    longest = 0;
+    longestRepeatSub(t, longest, start);
+    repeatNum = start.size();
+    if(repeatNum != 0)
+    {
+        for(vecIter i=start.begin(); i!=start.end(); i++)
+        {
+            HighLight(&rstt, *i, longest);
+        }
+    }
+    ui->stringT->document()->setHtml(s2q(rstt));
+    // Show the direction
+    string direction = "Direction:\n\tFind the longest repeated sub-string in \"String S\" and \"String T\"";
+    ui->Direction->setWordWrap(true);
+    ui->Direction->setAlignment(Qt::AlignTop);
+    ui->Direction->setText(s2q(direction));
+    // Show the result
+//    string result =
+//    ui->Result->setWordWrap(true);
+//    ui->Result->setAlignment(Qt::AlignTop);
+//    ui->Result->setText(s2q(result));
+}

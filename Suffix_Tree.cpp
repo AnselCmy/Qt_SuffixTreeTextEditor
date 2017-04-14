@@ -125,17 +125,16 @@ int isContain(string s, string t)
 }
 
 
-void getLeafNum(SuffixNode* sn, int& num, vector<int>& start)
+void getLeafNum(SuffixNode* sn, vector<int>& start)
 {
 	if(sn->branchNum == 0)
 	{
-		num += 1;
 		start.push_back(sn->subSrc);
 		return;
 	}
 	for(mapIter i=sn->next.begin(); i!=sn->next.end(); i++)
 	{
-		getLeafNum(i->second, num, start);
+		getLeafNum(i->second, start);
 	}
 }
 
@@ -143,7 +142,7 @@ void count(SuffixNode* sn, string t, int& num, vector<int>& start)
 { 
 	if(sn->nodeStr.substr(0, t.size()) == t)
 	{
-		getLeafNum(sn ,num, start);
+		getLeafNum(sn, start);
 		return;
 	}
 	if(sn->branchNum == 0)
@@ -189,11 +188,14 @@ void digForDeepestNotLeaf(SuffixNode* sn, int currentDepth, SuffixNode*& dn, int
 	}
 }
 
-void digForLongestNotLeaf(SuffixNode* sn, SuffixNode*& ln, int& longest)
+void digForLongestNotLeaf(SuffixNode* sn, SuffixNode*& ln, int& longest, vector<int>& start)
 {
 	if(sn->nodeStr.size() > longest && sn->branchNum >=2)
 	{
 		longest = sn->nodeStr.size();
+		// To get the subSrc in leaf node
+		start.clear();
+		getLeafNum(sn, start);
 		ln = sn;
 	}
 	if(sn->branchNum == 0)
@@ -202,11 +204,11 @@ void digForLongestNotLeaf(SuffixNode* sn, SuffixNode*& ln, int& longest)
 	}
 	for(mapIter i=sn->next.begin(); i!=sn->next.end(); i++)
 	{
-		digForLongestNotLeaf(i->second, ln, longest);
+		digForLongestNotLeaf(i->second, ln, longest, start);
 	}
 }
 
-string longestRepearSub(string s)
+void longestRepeatSub(string s, int& longest, vector<int>& start)
 {
 	// Cost more by using suffix tree without compression
 	// SuffixNode* st = creatSuffixTree(s, false);
@@ -218,9 +220,7 @@ string longestRepearSub(string s)
 	// Using the compressed tree is more sufficient
 	SuffixNode* st = creatSuffixTree(s);
 	SuffixNode* longestNodeNotLeaf;
-	int longest = 0;
-	digForLongestNotLeaf(st, longestNodeNotLeaf, longest);
-	return longestNodeNotLeaf->nodeStr;
+	digForLongestNotLeaf(st, longestNodeNotLeaf, longest, start);
 }
 
 void HighLight(string* sPtr, int pos, int len)
@@ -249,13 +249,25 @@ int main(int argc, char const *argv[])
 	// int rst = isContain(s, t);
 	// cout << rst << endl;
 	// cout << s.substr(0, rst) + string("<b>") + s.substr(rst, t.size()) + string("<b>") + s.substr(rst+t.size(), s.size()) << endl;
-	vector<int> repeatVec = findRepeatNum(s, t);
-	sort(repeatVec.begin(), repeatVec.end(),greater<int>());
-	for(vecIter i=repeatVec.begin(); i!=repeatVec.end(); i++)
+	
+	// vector<int> repeatVec = findRepeatNum(s, t);
+	// sort(repeatVec.begin(), repeatVec.end(),greater<int>());
+	// for(vecIter i=repeatVec.begin(); i!=repeatVec.end(); i++)
+	// {
+	// 	HighLight(&rst, *i, t.size());
+	// }
+	// cout << rst << endl;
+	int longest = 0;
+	vector<int> start;
+	string str = "cdfscacaxzcdasdfgsdfscascadaczdasdfgadasdfg";
+	longestRepeatSub(str, longest, start);
+	sort(start.begin(), start.end(),greater<int>());
+	for(vecIter i=start.begin(); i!=start.end(); i++)
 	{
-		HighLight(&rst, *i, t.size());
+		HighLight(&str, *i, longest);
+		cout << *i << " ";
 	}
-	cout << rst << endl;
-	// cout << longestRepearSub("cdfscacaxzcdasdfgsdfscascadaczdasdfgadasdfg") << endl;
+	cout << str;
+	// cout <<  << endl;
 	return 0;
 }
