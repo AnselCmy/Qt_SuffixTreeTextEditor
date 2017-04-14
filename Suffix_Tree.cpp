@@ -210,6 +210,7 @@ string longestRepearSub(string s)
 	return longestNodeNotLeaf->nodeStr;
 }
 
+
 int main(int argc, char const *argv[])
 {
 	string s = "banana";
@@ -225,7 +226,7 @@ int main(int argc, char const *argv[])
 	// cout << st->branchNum << endl;
 	// cout << "test" << " " << st->next['b']->nodeStr << endl;
 	// cout << isContain("anselishandsome", "sk") << endl;
-	cout << findRepeatNum("cdfscacaxzcdasdfgsdfscascadaczdasdfgadasdfg", "fg") << endl;
-	// cout << longestRepearSub("cdfscacaxzcdasdfgsdfscascadaczdasdfgadasdfg") << endl;
+	// cout << findRepeatNum("dsfvnjafgadchufgaucbagfbcvagffgfgfgcd", "fg") << endl;
+	cout << longestRepearSub("cdfscacaxzcdasdfgsdfscascadaczdasdfgadasdfg") << endl;
 	return 0;
 }
