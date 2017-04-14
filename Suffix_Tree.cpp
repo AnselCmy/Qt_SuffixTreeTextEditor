@@ -3,6 +3,7 @@
 #include <vector>
 #include <map>
 #define mapIter map<char, SuffixNode*>::iterator
+#define vecIter vector<int>::iterator
 using namespace std;
 
 struct SuffixNode
@@ -10,6 +11,7 @@ struct SuffixNode
 	map<char, SuffixNode*> next;
 	string nodeStr;
 	int branchNum;
+	int subSrc;
 };
 
 
@@ -43,6 +45,7 @@ void insertStr(SuffixNode* st, string s)
 			}
 			tempNode = tempNode->next[str[i]];
 		}
+		tempNode->subSrc = start;
 	}
 }
 
@@ -59,6 +62,7 @@ void compress(SuffixNode* sn)
 		sn->next = delNode->next;
 		sn->nodeStr = delNode->nodeStr;
 		sn->branchNum = delNode->branchNum;
+		sn->subSrc = delNode->subSrc;
 		delete delNode;
 	}
 	if(sn->branchNum == 0)
@@ -81,6 +85,7 @@ SuffixNode* creatSuffixTree(string s, bool zip = true)
 	SuffixNode* st = new SuffixNode();
 	st->nodeStr = "\0";
 	st->branchNum = 0;
+	st->subSrc = -1;
 	// insert the string without compress
 	insertStr(st, s);
 	// compress the suffix tree
@@ -91,12 +96,13 @@ SuffixNode* creatSuffixTree(string s, bool zip = true)
 }
 
 
-void contrast(SuffixNode* sn, string t, bool& flag)
+void contrast(SuffixNode* sn, string t, bool& flag, int& start)
 {
 	// contrast if same with t
-	if(sn->nodeStr.substr(0, t.size()) == t)
+	if(sn->branchNum == 0 && sn->nodeStr.substr(0, t.size()) == t)
 	{
-		flag = true;	
+		flag = true;
+		start = sn->subSrc;
 		return;
 	}
 	if(sn->branchNum == 0 || flag)
@@ -105,37 +111,39 @@ void contrast(SuffixNode* sn, string t, bool& flag)
 	}
 	for(mapIter i=sn->next.begin(); i!=sn->next.end(); i++)
 	{
-		contrast(i->second, t, flag);
+		contrast(i->second, t, flag, start);
 	}
 }
 
-bool isContain(string s, string t)
+int isContain(string s, string t)
 {
 	SuffixNode* st = creatSuffixTree(s);
 	bool flag = false;
-	contrast(st, t, flag);
-	return flag;
+	int start = -1;
+	contrast(st, t, flag, start);
+	return start;
 }
 
 
-void getLeafNum(SuffixNode* sn, int& num)
+void getLeafNum(SuffixNode* sn, int& num, vector<int>& start)
 {
 	if(sn->branchNum == 0)
 	{
 		num += 1;
+		start.push_back(sn->subSrc);
 		return;
 	}
 	for(mapIter i=sn->next.begin(); i!=sn->next.end(); i++)
 	{
-		getLeafNum(i->second, num);
+		getLeafNum(i->second, num, start);
 	}
 }
 
-void count(SuffixNode* sn, string t, int& num)
+void count(SuffixNode* sn, string t, int& num, vector<int>& start)
 { 
-	if(sn->nodeStr == t)
+	if(sn->nodeStr.substr(0, t.size()) == t)
 	{
-		getLeafNum(sn ,num);
+		getLeafNum(sn ,num, start);
 		return;
 	}
 	if(sn->branchNum == 0)
@@ -144,17 +152,22 @@ void count(SuffixNode* sn, string t, int& num)
 	}	
 	for(mapIter i=sn->next.begin(); i!=sn->next.end(); i++)
 	{
-		count(i->second, t, num);
+		count(i->second, t, num, start);
 	}
 }
 
-int findRepeatNum(string s, string t)
+vector<int> findRepeatNum(string s, string t)
 {
 	// A suffix tree without compression
-	SuffixNode* st = creatSuffixTree(s, false);
+	SuffixNode* st = creatSuffixTree(s);
 	int num = 0;
-	count(st, t, num);
-	return num;
+	vector<int> start;
+	count(st, t, num, start);
+	for(vecIter a=start.begin(); a!=start.end(); a++)
+	{
+		cout << *a << " ";
+	}
+	return start;
 }
 
 
@@ -210,23 +223,39 @@ string longestRepearSub(string s)
 	return longestNodeNotLeaf->nodeStr;
 }
 
+void HighLight(string* sPtr, int pos, int len)
+{
+    string s = *sPtr;
+    *sPtr = s.substr(0, pos) + string("/") + s.substr(pos, len) + string("/") + s.substr(pos+len, s.size());
+}
 
 int main(int argc, char const *argv[])
 {
-	string s = "banana";
-	SuffixNode* st = creatSuffixTree(s);
+	// string s = "banana";
+	// SuffixNode* st = creatSuffixTree(s);
 	// SuffixNode* stnc = creatSuffixTree(s, false);
 	// int num = 0;
 	// getLeafNum(st, num);
 	// cout << num << endl;
 	// cout << "-------" << endl;
 	// compress(st);
-	// cout << st->next['b']->nodeStr << endl;
+	// cout << st->next['$']->subSrc << endl;
 	// cout << st->next['n']->next['a']->nodeStr << endl;
 	// cout << st->branchNum << endl;
 	// cout << "test" << " " << st->next['b']->nodeStr << endl;
-	// cout << isContain("anselishandsome", "sk") << endl;
-	// cout << findRepeatNum("dsfvnjafgadchufgaucbagfbcvagffgfgfgcd", "fg") << endl;
-	cout << longestRepearSub("cdfscacaxzcdasdfgsdfscascadaczdasdfgadasdfg") << endl;
+	string s = "asdfvmkdmvsdmkjdfvgkjnjfnbnbkjfdkfvkjdnvjkdnfjkvmjdfnmvzkcmiemrfmdsfkmsfmskmfkmsvmisfmmvjadfdfvdfvvdvgfddfdfdfd";
+	string t = "df";
+	string rst = s;
+	// int rst = isContain(s, t);
+	// cout << rst << endl;
+	// cout << s.substr(0, rst) + string("<b>") + s.substr(rst, t.size()) + string("<b>") + s.substr(rst+t.size(), s.size()) << endl;
+	vector<int> repeatVec = findRepeatNum(s, t);
+	sort(repeatVec.begin(), repeatVec.end(),greater<int>());
+	for(vecIter i=repeatVec.begin(); i!=repeatVec.end(); i++)
+	{
+		HighLight(&rst, *i, t.size());
+	}
+	cout << rst << endl;
+	// cout << longestRepearSub("cdfscacaxzcdasdfgsdfscascadaczdasdfgadasdfg") << endl;
 	return 0;
 }

@@ -14,8 +14,10 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
@@ -28,6 +30,13 @@ class Ui_MainWindow
 public:
     QWidget *centralWidget;
     QPushButton *ContainJudgeButton;
+    QPlainTextEdit *stringS;
+    QPlainTextEdit *stringT;
+    QLabel *label;
+    QLabel *label_2;
+    QLabel *Direction;
+    QLabel *Result;
+    QPushButton *RepeatingCountButton;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -36,16 +45,37 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(400, 300);
+        MainWindow->resize(545, 464);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         ContainJudgeButton = new QPushButton(centralWidget);
         ContainJudgeButton->setObjectName(QStringLiteral("ContainJudgeButton"));
-        ContainJudgeButton->setGeometry(QRect(30, 30, 161, 32));
+        ContainJudgeButton->setGeometry(QRect(30, 220, 160, 32));
+        stringS = new QPlainTextEdit(centralWidget);
+        stringS->setObjectName(QStringLiteral("stringS"));
+        stringS->setGeometry(QRect(30, 50, 200, 150));
+        stringT = new QPlainTextEdit(centralWidget);
+        stringT->setObjectName(QStringLiteral("stringT"));
+        stringT->setGeometry(QRect(270, 50, 200, 150));
+        label = new QLabel(centralWidget);
+        label->setObjectName(QStringLiteral("label"));
+        label->setGeometry(QRect(100, 30, 60, 16));
+        label_2 = new QLabel(centralWidget);
+        label_2->setObjectName(QStringLiteral("label_2"));
+        label_2->setGeometry(QRect(340, 30, 60, 16));
+        Direction = new QLabel(centralWidget);
+        Direction->setObjectName(QStringLiteral("Direction"));
+        Direction->setGeometry(QRect(270, 220, 250, 100));
+        Result = new QLabel(centralWidget);
+        Result->setObjectName(QStringLiteral("Result"));
+        Result->setGeometry(QRect(270, 330, 250, 61));
+        RepeatingCountButton = new QPushButton(centralWidget);
+        RepeatingCountButton->setObjectName(QStringLiteral("RepeatingCountButton"));
+        RepeatingCountButton->setGeometry(QRect(30, 260, 160, 32));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 400, 22));
+        menuBar->setGeometry(QRect(0, 0, 545, 22));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -63,6 +93,11 @@ public:
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", Q_NULLPTR));
         ContainJudgeButton->setText(QApplication::translate("MainWindow", "Containing Judge", Q_NULLPTR));
+        label->setText(QApplication::translate("MainWindow", "String S", Q_NULLPTR));
+        label_2->setText(QApplication::translate("MainWindow", "String T", Q_NULLPTR));
+        Direction->setText(QString());
+        Result->setText(QString());
+        RepeatingCountButton->setText(QApplication::translate("MainWindow", "Repeating Count", Q_NULLPTR));
     } // retranslateUi
 
 };
